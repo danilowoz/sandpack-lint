@@ -11,6 +11,10 @@ const reactCode = `function App() {
     console.log(a);
   }, []);
 
+  if(a) {
+    const foo = useState()
+  }
+
   return (
     <div className="App">
       <h1>Hello CodeSandbox</h1>

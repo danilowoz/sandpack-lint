@@ -46,7 +46,7 @@ export const lintDiagnostic = (code: string) => {
       return acc;
     }, 0);
 
-    let to = code.split("").reduce((acc, curr, i) => {
+    let to = code.split("\n").reduce((acc, curr, i) => {
       // -1 is to fix the array index
       if (i < error.endLine - 1) {
         return acc + curr.length + 1;
@@ -54,9 +54,11 @@ export const lintDiagnostic = (code: string) => {
       return acc;
     }, 0);
 
+    console.log(from, to);
+
     return {
-      from: from + error.column,
-      to: to + error.endColumn,
+      from: from + error.column - 1,
+      to: to + error.endColumn - 1,
       severity: "error",
       message: error.message,
     };
