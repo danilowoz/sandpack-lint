@@ -3,7 +3,6 @@ import {
   SandpackProvider,
 } from "@codesandbox/sandpack-react";
 import React, { useCallback, useEffect, useRef } from "react";
-import { lintDiagnostic as foo } from "./lint";
 
 const reactCode = `function App() {
   const [a, setA] = React.useState("");
@@ -25,7 +24,7 @@ const Editor = () => {
   const lintDiagnostic = useRef<any>(() => []);
 
   useEffect(function lazyLintModule() {
-    import("./lint").then((module) => {
+    import("../lint").then((module) => {
       lintDiagnostic.current = module.lintDiagnostic;
     });
   }, []);
@@ -40,12 +39,15 @@ const Editor = () => {
 
 const App: React.FC = () => {
   return (
-    <SandpackProvider
-      template="react"
-      customSetup={{ files: { "/App.js": reactCode } }}
-    >
-      <Editor />
-    </SandpackProvider>
+    <>
+      Hello Sandpack
+      <SandpackProvider
+        template="react"
+        customSetup={{ files: { "/App.js": reactCode } }}
+      >
+        <Editor />
+      </SandpackProvider>
+    </>
   );
 };
 

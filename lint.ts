@@ -1,4 +1,4 @@
-import { Linter } from "../node_modules/eslint/lib/linter/linter";
+import { Linter } from "./node_modules/eslint/lib/linter/linter";
 
 const linter = new Linter();
 
