@@ -1,4 +1,7 @@
 import { Linter } from "./node_modules/eslint/lib/linter/linter";
+import { LintDiagnostic } from "@codesandbox/sandpack-react";
+import { getCodeMirrorPosition } from "@codesandbox/sandpack-react/dist/cjs/components/CodeViewer/utils";
+import type { Text } from "@codemirror/text";
 
 const linter = new Linter();
 
@@ -10,8 +13,6 @@ esquery.parse = esquery.default?.parse;
 esquery.matches = esquery.default?.matches;
 
 const reactRules = require("eslint-plugin-react-hooks").rules;
-
-// TODO: any other rules?
 linter.defineRules({
   "react-hooks/rules-of-hooks": reactRules["rules-of-hooks"],
   "react-hooks/exhaustive-deps": reactRules["exhaustive-deps"],
@@ -27,39 +28,36 @@ const options = {
   },
   rules: {
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "error",
+    "react-hooks/exhaustive-deps": "warn",
   },
 };
 
-export const lintDiagnostic = (code: string) => {
-  const messages = linter.verify(code, options);
+export const lintDiagnostic = (doc: Text): LintDiagnostic[] => {
+  const codeString = doc.toString();
+  const messages = linter.verify(codeString, options);
 
-  // TODO: refactor
   return messages.map((error) => {
     if (!error) return;
 
-    let from = code.split("\n").reduce((acc, curr, i) => {
-      // -1 is to fix the array index
-      if (i < error.line - 1) {
-        return acc + curr.length + 1;
-      }
-      return acc;
-    }, 0);
+    const from = getCodeMirrorPosition(doc, {
+      line: error.line,
+      column: error.column,
+    });
 
-    let to = code.split("\n").reduce((acc, curr, i) => {
-      // -1 is to fix the array index
-      if (i < error.endLine - 1) {
-        return acc + curr.length + 1;
-      }
-      return acc;
-    }, 0);
+    const to = getCodeMirrorPosition(doc, {
+      line: error.endLine,
+      column: error.endColumn,
+    });
 
-    console.log(from, to);
+    const severity = {
+      1: "warning",
+      2: "error",
+    };
 
     return {
-      from: from + error.column - 1,
-      to: to + error.endColumn - 1,
-      severity: "error",
+      from,
+      to,
+      severity: severity[error.severity],
       message: error.message,
     };
   });
