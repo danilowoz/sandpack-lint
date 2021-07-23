@@ -1,17 +1,24 @@
 import {
   SandpackCodeEditor,
+  SandpackLayout,
+  SandpackPreview,
   SandpackProvider,
 } from "@codesandbox/sandpack-react";
 import React, { useCallback, useEffect, useRef } from "react";
+import "@codesandbox/sandpack-react/dist/index.css";
 
-const reactCode = `function App() {
-  const [a, setA] = React.useState("");
-  // This should give a warning
+const reactCode = `import { useState, useEffect } from "react"
+
+export default function App() {
+  const [a, setA] = useState("");
+
   useEffect(() => {
     console.log(a);
+    // This should give a warning
   }, []);
-
+  
   if(a) {
+    // This should give an error
     const foo = useState()
   }
 
@@ -22,6 +29,7 @@ const reactCode = `function App() {
     </div>
   );
 }
+
 `;
 
 const Editor = () => {
@@ -38,18 +46,21 @@ const Editor = () => {
     [lintDiagnostic.current]
   );
 
-  return <SandpackCodeEditor onLint={onLintLazyLoad} />;
+  return <SandpackCodeEditor showLineNumbers onLint={onLintLazyLoad} />;
 };
 
 const App: React.FC = () => {
   return (
     <>
-      Hello Sandpack
+      <h1>Hello Sandpack</h1>
       <SandpackProvider
         template="react"
         customSetup={{ files: { "/App.js": reactCode } }}
       >
-        <Editor />
+        <SandpackLayout>
+          <Editor />
+          <SandpackPreview />
+        </SandpackLayout>
       </SandpackProvider>
     </>
   );
