@@ -32,11 +32,13 @@ const options = {
   },
 };
 
-export const lintDiagnostic = (doc: Text): LintDiagnostic[] => {
+export const lintDiagnostic = (
+  doc: Text
+): { errors: any[]; codeMirrorPayload: LintDiagnostic[] } => {
   const codeString = doc.toString();
-  const messages = linter.verify(codeString, options);
+  const errors = linter.verify(codeString, options);
 
-  return messages.map((error) => {
+  const codeMirrorPayload = errors.map((error) => {
     if (!error) return;
 
     const from = getCodeMirrorPosition(doc, {
@@ -61,4 +63,6 @@ export const lintDiagnostic = (doc: Text): LintDiagnostic[] => {
       message: error.message,
     };
   });
+
+  return { codeMirrorPayload, errors };
 };

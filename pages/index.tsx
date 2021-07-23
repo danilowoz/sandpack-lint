@@ -4,7 +4,7 @@ import {
   SandpackPreview,
   SandpackProvider,
 } from "@codesandbox/sandpack-react";
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import "@codesandbox/sandpack-react/dist/index.css";
 
 const reactCode = `import { useState, useEffect } from "react"
@@ -34,6 +34,7 @@ export default function App() {
 
 const Editor = () => {
   const lintDiagnostic = useRef<any>(() => []);
+  const [diagnostic, setDiagnostic] = useState([]);
 
   useEffect(function lazyLintModule() {
     import("../lint").then((module) => {
@@ -46,7 +47,30 @@ const Editor = () => {
     [lintDiagnostic.current]
   );
 
-  return <SandpackCodeEditor showLineNumbers onLint={onLintLazyLoad} />;
+  return (
+    <div>
+      <SandpackCodeEditor
+        showLineNumbers
+        onLint={(doc) => {
+          const { codeMirrorPayload, errors } = onLintLazyLoad(doc);
+
+          setDiagnostic(errors);
+
+          return codeMirrorPayload;
+        }}
+      />
+
+      <div>
+        {diagnostic.map((e) => {
+          return (
+            <p style={{ color: e.severity === 1 ? "orange" : "red" }}>
+              [{e.line}:{e.column}] - {e.message}
+            </p>
+          );
+        })}
+      </div>
+    </div>
+  );
 };
 
 const App: React.FC = () => {
