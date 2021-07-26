@@ -10,19 +10,19 @@ https://github.com/danilowoz/sandpack-lint/blob/master/lint.ts
 
 #### 2. Setup webpack
 
-As the `eslint` uses internally a require with an expression, we need to set up the webpack to resolve it using a specific plugin, so check the `next.config.js`.
+As the `eslint` uses internally a require with an expression, we need to custom the webpack configuration to resolve it using a specific plugin, so check the `next.config.js`.
 
 https://github.com/danilowoz/sandpack-lint/blob/master/next.config.js
 
 #### 3. Setup Sandpack
 
-Now Sandpack supports the `onLint` prop, which will be called when the Codemirror loads and in every code changes. This prop is a function that receives the Codemirror instance and expects a diagnostics array as a return.
+Sandpack introduces the `onLint` prop, which will be called when the **Codemirror loads** and in **every code changes**. This prop is a function that receives the Codemirror instance and expects a diagnostics array as return.
 
 https://github.com/danilowoz/sandpack-lint/blob/master/pages/index.tsx#L56-L62
 
 #### 4. Lazy load the lint module
 
-Once the component is rendered, and the CodeMirror is loaded, we need to lazy load the `lint.ts` module. This is done in a `useEffect` with a regular async import, and once the module is loaded, we replace the ref with the new instance.
+Once the component is rendered, and the CodeMirror is loaded, we need to lazy load the `lint.ts` module. This is done in a `useEffect` with a regular async import, and once the module is loaded, we replace a ref with the new function instance just loaded.
 
 https://github.com/danilowoz/sandpack-lint/blob/master/pages/index.tsx#L41-L50
 
