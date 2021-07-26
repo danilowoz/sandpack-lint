@@ -1,8 +1,10 @@
 import {
+  ErrorOverlay,
   SandpackCodeEditor,
   SandpackLayout,
   SandpackPreview,
   SandpackProvider,
+  useClasser,
 } from "@codesandbox/sandpack-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import "@codesandbox/sandpack-react/dist/index.css";
@@ -32,10 +34,10 @@ export default function App() {
 
 `;
 
-const Editor = () => {
+const Editor = ({ setDiagnostic }) => {
   const lintDiagnostic = useRef<any>(() => []);
-  const [diagnostic, setDiagnostic] = useState([]);
 
+  // This might be loaded once in the page
   useEffect(function lazyLintModule() {
     import("../lint").then((module) => {
       lintDiagnostic.current = module.lintDiagnostic;
@@ -59,21 +61,14 @@ const Editor = () => {
           return codeMirrorPayload;
         }}
       />
-
-      <div>
-        {diagnostic.map((e) => {
-          return (
-            <p style={{ color: e.severity === 1 ? "orange" : "red" }}>
-              [{e.line}:{e.column}] - {e.message}
-            </p>
-          );
-        })}
-      </div>
     </div>
   );
 };
 
 const App: React.FC = () => {
+  const c = useClasser("sp");
+  const [diagnostic, setDiagnostic] = useState([]);
+
   return (
     <>
       <h1>Hello Sandpack</h1>
@@ -82,8 +77,24 @@ const App: React.FC = () => {
         customSetup={{ files: { "/App.js": reactCode } }}
       >
         <SandpackLayout>
-          <Editor />
-          <SandpackPreview />
+          <Editor setDiagnostic={setDiagnostic} />
+
+          <div className={c("preview-container")}>
+            {diagnostic.length > 0 && (
+              <div className={c("overlay", "error")} style={{ zIndex: 99 }}>
+                <div className={c("error-message")}>
+                  {diagnostic.map((e) => {
+                    return (
+                      <p style={{ color: e.severity === 1 ? "orange" : "red" }}>
+                        [{e.line}:{e.column}] - {e.message}
+                      </p>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+            <SandpackPreview />
+          </div>
         </SandpackLayout>
       </SandpackProvider>
     </>

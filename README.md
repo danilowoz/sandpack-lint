@@ -4,7 +4,7 @@ https://sandpack-lint.vercel.app/
 
 #### 1. Setup eslint
 
-All the setup is done in the `lint.ts` file, where we install the `eslint` and its rules. Also, you can find there the function `lintDiagnos`, which is used to check the code with eslint and generate the proper diagnostics array to the CodeMirrir.
+All the setup is done in the `lint.ts` file, where we install the `eslint` and its rules. Also, you can find there the function `lintDiagnostic`, which is used to check the code with eslint and generate the proper diagnostics array to the CodeMirror.
 
 #### 2. Setup webpack
 
@@ -32,3 +32,7 @@ const onLintLazyLoad = useCallback(
   [lintDiagnostic.current]
 );
 ```
+
+#### 5. Print the errors in the bundler
+
+Sandpack has a custom component to print the error on top of the bundle preview, so as we already have the error messages from lint we just need to print them in this custom component.

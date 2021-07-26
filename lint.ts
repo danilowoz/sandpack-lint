@@ -19,8 +19,6 @@ linter.defineRules({
 });
 
 const options = {
-  // TODO: Ives, do you really need this?
-  // parser: "babel-eslint",
   parserOptions: {
     ecmaVersion: 12,
     sourceType: "module",
