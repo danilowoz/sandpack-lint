@@ -1,5 +1,4 @@
 import {
-  ErrorOverlay,
   SandpackCodeEditor,
   SandpackLayout,
   SandpackPreview,
@@ -93,7 +92,8 @@ const App: React.FC = () => {
                 </div>
               </div>
             )}
-            <SandpackPreview />
+
+            {diagnostic.length === 0 && <SandpackPreview />}
           </div>
         </SandpackLayout>
       </SandpackProvider>
